@@ -21,7 +21,6 @@
     {% endif %}
 </div>
 
-<!-- Table / Empty State -->
 <div class="card glass-card">
     <div class="card-body p-0">
         {% if history %}
@@ -29,70 +28,92 @@
             <table class="table table-hover table-borderless align-middle mb-0 custom-table">
                 <thead>
                     <tr>
-                        <th class="ps-3 ps-md-4">Waktu</th>
-                        <th>Algoritma</th>
-                        <th>Mode</th>
-                        <th class="d-none d-md-table-cell">Kunci</th>
-                        <th class="d-none d-sm-table-cell">Input</th>
-                        <th class="pe-3 pe-md-4">Hasil</th>
+                        <th class="ps-3 ps-md-4" style="min-width:120px;">Waktu</th>
+                        <th style="min-width:110px;">Algoritma</th>
+                        <th style="min-width:100px;">Mode</th>
+                        <th class="d-none d-md-table-cell" style="min-width:120px;">Kunci</th>
+                        <th class="d-none d-sm-table-cell" style="min-width:130px;">Input</th>
+                        <th class="pe-3 pe-md-4" style="min-width:130px;">Hasil</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in history %}
-                    {% set algo_color = {
-                        'caesar':   'primary',
-                        'vigenere': 'info',
-                        'affine':   'warning',
-                        'hill':     'danger',
-                        'playfair': 'success'
-                    }.get(item.algorithm, 'secondary') %}
+
+                    {# --- Warna per algoritma --- #}
+                    {% if item.algorithm == 'caesar' %}
+                        {% set badge_bg = '#3b82f6' %}
+                    {% elif item.algorithm == 'vigenere' %}
+                        {% set badge_bg = '#06b6d4' %}
+                    {% elif item.algorithm == 'affine' %}
+                        {% set badge_bg = '#f59e0b' %}
+                    {% elif item.algorithm == 'hill' %}
+                        {% set badge_bg = '#ef4444' %}
+                    {% elif item.algorithm == 'playfair' %}
+                        {% set badge_bg = '#10b981' %}
+                    {% else %}
+                        {% set badge_bg = '#6366f1' %}
+                    {% endif %}
+
                     <tr>
-                        <td class="ps-3 ps-md-4 font-monospace text-muted text-nowrap" style="font-size:.72rem;">
+                        <!-- Waktu -->
+                        <td class="ps-3 ps-md-4 font-monospace text-nowrap"
+                            style="font-size:.72rem; color: #94a3b8;">
                             {{ item.timestamp }}
                         </td>
+
+                        <!-- Algoritma -->
                         <td>
-                            <span class="badge rounded-pill px-2 py-1 fw-semibold
-                                         bg-{{ algo_color }} bg-opacity-20
-                                         text-{{ algo_color }}
-                                         border border-{{ algo_color }} border-opacity-40
-                                         text-capitalize"
-                                  style="font-size:.72rem; letter-spacing:.02em;">
-                                {{ item.algorithm }}
+                            <span style="display:inline-flex; align-items:center; gap:7px; white-space:nowrap;">
+                                <span style="width:10px; height:10px; border-radius:50%; background:{{ badge_bg }};
+                                             flex-shrink:0; display:inline-block;"></span>
+                                <span style="font-size:.82rem; font-weight:600; text-transform:capitalize;
+                                             color: {{ badge_bg }};">{{ item.algorithm }}</span>
                             </span>
                         </td>
+
+                        <!-- Mode -->
                         <td>
                             {% if item.mode == 'encrypt' %}
-                            <span class="badge rounded-pill px-2 py-1 bg-success bg-opacity-20
-                                         text-success border border-success border-opacity-40"
-                                  style="font-size:.72rem;">
-                                <i class="fa-solid fa-lock" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline ms-1">Encrypt</span>
+                            <span style="display:inline-flex; align-items:center; gap:7px; white-space:nowrap;">
+                                <i class="fa-solid fa-lock" style="font-size:.75rem; color:#10b981;" aria-hidden="true"></i>
+                                <span style="font-size:.82rem; font-weight:600; color:#10b981;">Encrypt</span>
                             </span>
                             {% else %}
-                            <span class="badge rounded-pill px-2 py-1 bg-warning bg-opacity-20
-                                         text-warning border border-warning border-opacity-40"
-                                  style="font-size:.72rem;">
-                                <i class="fa-solid fa-lock-open" aria-hidden="true"></i>
-                                <span class="d-none d-sm-inline ms-1">Decrypt</span>
+                            <span style="display:inline-flex; align-items:center; gap:7px; white-space:nowrap;">
+                                <i class="fa-solid fa-lock-open" style="font-size:.75rem; color:#f59e0b;" aria-hidden="true"></i>
+                                <span style="font-size:.82rem; font-weight:600; color:#f59e0b;">Decrypt</span>
                             </span>
                             {% endif %}
                         </td>
+
+                        <!-- Kunci -->
                         <td class="font-monospace d-none d-md-table-cell"
                             style="font-size:.78rem; color: var(--c-cyan);">
                             {{ item.key_summary }}
                         </td>
-                        <td class="text-muted d-none d-sm-table-cell" style="max-width:140px; font-size:.78rem;">
-                            <span class="d-block text-truncate" title="{{ item.text }}">{{ item.text }}</span>
+
+                        <!-- Input -->
+                        <td class="text-muted d-none d-sm-table-cell"
+                            style="max-width:150px; font-size:.78rem;">
+                            <span class="d-block text-truncate" title="{{ item.text }}">
+                                {{ item.text }}
+                            </span>
                         </td>
-                        <td class="pe-3 pe-md-4 font-monospace fw-semibold text-success"
-                            style="max-width:140px; font-size:.78rem;">
-                            <span class="d-block text-truncate" title="{{ item.result }}">{{ item.result }}</span>
+
+                        <!-- Hasil -->
+                        <td class="pe-3 pe-md-4 font-monospace fw-semibold"
+                            style="max-width:150px; font-size:.78rem; color: #34d399;">
+                            <span class="d-block text-truncate" title="{{ item.result }}">
+                                {{ item.result }}
+                            </span>
                         </td>
                     </tr>
+
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
         {% else %}
         <div class="text-center py-5 text-muted">
             <div style="font-size:2.5rem; opacity:.25;" class="mb-3">
@@ -104,4 +125,5 @@
         {% endif %}
     </div>
 </div>
+
 {% endblock %}
