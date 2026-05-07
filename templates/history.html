@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Header -->
+<div class="row align-items-center mb-4 g-2">
+    <div class="col">
+        <h1 class="h4 fw-bold mb-1">
+            <i class="fa-solid fa-clock-rotate-left me-2 text-primary" aria-hidden="true"></i>Riwayat Simulasi
+        </h1>
+        <p class="text-muted small mb-0">Maks. 20 operasi terakhir tersimpan dalam sesi ini.</p>
+    </div>
+    {% if history %}
+    <div class="col-auto">
+        <form action="{{ url_for('clear_history') }}" method="POST"
+              onsubmit="return confirm('Hapus semua riwayat?');">
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                <i class="fa-solid fa-trash-can me-1" aria-hidden="true"></i>Hapus Semua
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Table / Empty State -->
+<div class="card glass-card">
+    <div class="card-body p-0">
+        {% if history %}
+        <div class="table-responsive">
+            <table class="table table-hover table-borderless align-middle mb-0 custom-table">
+                <thead>
+                    <tr>
+                        <th class="ps-3 ps-md-4">Waktu</th>
+                        <th>Algoritma</th>
+                        <th>Mode</th>
+                        <th class="d-none d-md-table-cell">Kunci</th>
+                        <th class="d-none d-sm-table-cell">Input</th>
+                        <th class="pe-3 pe-md-4">Hasil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in history %}
+                    {% set algo_color = {
+                        'caesar':   'primary',
+                        'vigenere': 'info',
+                        'affine':   'warning',
+                        'hill':     'danger',
+                        'playfair': 'success'
+                    }.get(item.algorithm, 'secondary') %}
+                    <tr>
+                        <td class="ps-3 ps-md-4 font-monospace text-muted text-nowrap" style="font-size:.72rem;">
+                            {{ item.timestamp }}
+                        </td>
+                        <td>
+                            <span class="badge rounded-pill px-2 py-1 fw-semibold
+                                         bg-{{ algo_color }} bg-opacity-20
+                                         text-{{ algo_color }}
+                                         border border-{{ algo_color }} border-opacity-40
+                                         text-capitalize"
+                                  style="font-size:.72rem; letter-spacing:.02em;">
+                                {{ item.algorithm }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if item.mode == 'encrypt' %}
+                            <span class="badge rounded-pill px-2 py-1 bg-success bg-opacity-20
+                                         text-success border border-success border-opacity-40"
+                                  style="font-size:.72rem;">
+                                <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline ms-1">Encrypt</span>
+                            </span>
+                            {% else %}
+                            <span class="badge rounded-pill px-2 py-1 bg-warning bg-opacity-20
+                                         text-warning border border-warning border-opacity-40"
+                                  style="font-size:.72rem;">
+                                <i class="fa-solid fa-lock-open" aria-hidden="true"></i>
+                                <span class="d-none d-sm-inline ms-1">Decrypt</span>
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="font-monospace d-none d-md-table-cell"
+                            style="font-size:.78rem; color: var(--c-cyan);">
+                            {{ item.key_summary }}
+                        </td>
+                        <td class="text-muted d-none d-sm-table-cell" style="max-width:140px; font-size:.78rem;">
+                            <span class="d-block text-truncate" title="{{ item.text }}">{{ item.text }}</span>
+                        </td>
+                        <td class="pe-3 pe-md-4 font-monospace fw-semibold text-success"
+                            style="max-width:140px; font-size:.78rem;">
+                            <span class="d-block text-truncate" title="{{ item.result }}">{{ item.result }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <div style="font-size:2.5rem; opacity:.25;" class="mb-3">
+                <i class="fa-solid fa-inbox" aria-hidden="true"></i>
+            </div>
+            <p class="mb-1 fw-medium">Belum ada riwayat</p>
+            <p class="small mb-0">Lakukan simulasi terlebih dahulu di halaman Simulator.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

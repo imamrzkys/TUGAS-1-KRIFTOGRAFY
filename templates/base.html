@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Simulasi Kriptografi Klasik — Caesar, Vigenere, Affine, Hill, Playfair dengan step-by-step calculation.">
+    <meta name="theme-color" content="#080810">
+    <title>CryptoLab — Simulasi Kriptografi Klasik</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <!-- Google Fonts: preconnect for speed -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Animated aurora background -->
+    <div class="aurora-bg" aria-hidden="true"></div>
+    <div class="aurora-mid" aria-hidden="true"></div>
+    <div class="stars" aria-hidden="true"></div>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar navbar-expand-lg glass-nav sticky-top" role="navigation" aria-label="Navigasi utama">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-gradient fs-5" href="{{ url_for('index') }}">
+                <i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i>CryptoLab
+            </a>
+            <button class="navbar-toggler border-0 shadow-none" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Buka menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-1 py-2 py-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 rounded-2 {% if request.endpoint == 'index' %}active{% endif %}"
+                           href="{{ url_for('index') }}">
+                            <i class="fa-solid fa-flask-vial me-1" aria-hidden="true"></i>Simulator
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 rounded-2 {% if request.endpoint == 'history' %}active{% endif %}"
+                           href="{{ url_for('history') }}">
+                            <i class="fa-solid fa-clock-rotate-left me-1" aria-hidden="true"></i>History
+                        </a>
+                    </li>
+                    <li class="nav-item mt-2 mt-lg-0 ms-lg-2">
+                        <button id="themeToggle" class="btn btn-sm rounded-pill px-3 btn-outline-secondary w-100 w-lg-auto"
+                                aria-label="Ganti tema" title="Toggle tema gelap/terang">
+                            <i class="fa-solid fa-moon me-1" aria-hidden="true"></i>
+                            <span class="theme-label">Dark</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== FLASH MESSAGES ===== -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container" role="alert" aria-live="polite">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm mb-2" role="alert">
+                        <i class="fa-solid
+                            {% if category == 'danger' %}fa-circle-xmark
+                            {% elif category == 'success' %}fa-circle-check
+                            {% elif category == 'warning' %}fa-triangle-exclamation
+                            {% else %}fa-circle-info{% endif %} me-2" aria-hidden="true"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="container py-4 mb-4 flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="py-3 text-center text-muted" style="font-size:.78rem; border-top: 1px solid var(--glass-border);">
+        Tugas 1 Kriptografi &middot; Semester 6 &middot; 2025/2026 Genap
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <!-- App JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

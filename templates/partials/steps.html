@@ -1,0 +1,143 @@
+<!-- Steps partial – detail perhitungan per algoritma -->
+
+<!-- Info bar -->
+<div class="d-flex align-items-center gap-2 mb-3">
+    <i class="fa-solid fa-list-check text-primary"></i>
+    <span class="fw-semibold">Detail Perhitungan</span>
+    <span class="badge bg-secondary ms-auto">{{ result_data.steps | length }} langkah</span>
+</div>
+
+{% if algo in ['caesar', 'vigenere', 'affine'] %}
+{# ---- Tabel langkah sederhana per karakter ---- #}
+    <div class="table-responsive small">
+        <table class="table table-sm table-hover table-borderless align-middle mb-0">
+            <thead class="text-muted text-uppercase small border-bottom border-secondary border-opacity-25">
+                <tr>
+                    <th style="width:3rem;">#</th>
+                    <th>Langkah</th>
+                </tr>
+            </thead>
+            <tbody class="font-monospace">
+                {% for step in result_data.steps %}
+                <tr>
+                    <td class="text-muted">{{ loop.index }}</td>
+                    <td class="{% if 'dipertahankan' in step %}text-muted fst-italic{% else %}text-light{% endif %}">
+                        {{ step }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% elif algo == 'hill' %}
+{# ---- Hill: per blok – matriks × vektor ---- #}
+    {% for step in result_data.steps %}
+    <div class="hill-block mb-3 p-3 rounded-3 border border-secondary border-opacity-25 bg-black bg-opacity-25">
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge bg-primary">Blok {{ loop.index }}</span>
+            <span class="font-monospace fw-bold text-info">{{ step.block }}</span>
+            <i class="fa-solid fa-arrow-right text-muted"></i>
+            <span class="font-monospace fw-bold text-success">{{ step.res_chars }}</span>
+        </div>
+
+        <div class="d-flex align-items-center flex-wrap gap-3 small font-monospace text-center">
+
+            {# Matrix (key or inverse) #}
+            {% set mat = result_data.key_matrix if mode == 'encrypt' else result_data.inv_matrix %}
+            <div>
+                <div class="text-muted mb-1 small">{{ 'K' if mode == 'encrypt' else 'K⁻¹' }}</div>
+                <div class="matrix-bracket">
+                    {% for row in mat %}
+                    <div class="matrix-row">
+                        {% for val in row %}
+                        <span class="matrix-val">{{ '%3d' % val }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <span class="text-muted fs-5">×</span>
+
+            {# Vector #}
+            <div>
+                <div class="text-muted mb-1 small">Vektor</div>
+                <div class="matrix-bracket">
+                    {% for v in step.vector %}
+                    <div class="matrix-row">
+                        <span class="matrix-val">{{ '%3d' % v }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <span class="text-muted fs-5">=</span>
+
+            {# Multiplication result #}
+            <div>
+                <div class="text-muted mb-1 small">Kali</div>
+                <div class="matrix-bracket">
+                    {% for v in step.mult_res %}
+                    <div class="matrix-row">
+                        <span class="matrix-val">{{ '%3d' % v }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <span class="text-muted small">mod 26</span>
+            <span class="text-muted fs-5">=</span>
+
+            {# Mod result #}
+            <div>
+                <div class="text-muted mb-1 small">Hasil</div>
+                <div class="matrix-bracket border-success">
+                    {% for v in step.mod_res %}
+                    <div class="matrix-row">
+                        <span class="matrix-val text-success fw-bold">{{ '%3d' % v }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+{% elif algo == 'playfair' %}
+{# ---- Playfair: tabel pasangan huruf ---- #}
+    <div class="table-responsive small">
+        <table class="table table-sm table-hover table-bordered align-middle mb-0">
+            <thead class="text-muted text-uppercase small">
+                <tr>
+                    <th>Pasangan</th>
+                    <th>Posisi 1</th>
+                    <th>Posisi 2</th>
+                    <th>Aturan</th>
+                    <th>Hasil</th>
+                </tr>
+            </thead>
+            <tbody class="font-monospace">
+                {% for s in result_data.calc_steps %}
+                <tr>
+                    <td class="text-warning fw-bold fs-6">{{ s.pair }}</td>
+                    <td class="text-muted">{{ s.pos1 }}</td>
+                    <td class="text-muted">{{ s.pos2 }}</td>
+                    <td>
+                        {% if s.rule == 'Same Row' %}
+                        <span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-50">{{ s.rule }}</span>
+                        {% elif s.rule == 'Same Column' %}
+                        <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-50">{{ s.rule }}</span>
+                        {% else %}
+                        <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-50">{{ s.rule }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-success fw-bold fs-6">{{ s.result }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endif %}
